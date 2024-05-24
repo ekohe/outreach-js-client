@@ -34,10 +34,8 @@ var apiRequest = function (props) {
             headers: {
                 "Content-Type": "application/vnd.api+json",
                 Authorization: "Bearer ".concat(token),
-                "Access-Control-Request-Headers": "Content-Type, Authorization",
             },
-            // referrer: "",
-            // mode: "no-cors",
+            mode: "cors",
             body: method !== "GET" ? JSON.stringify(params) : undefined,
         })
             .then(function (response) {
@@ -52,9 +50,17 @@ var apiRequest = function (props) {
     });
 };
 var OutreachBaseURL = "https://api.outreach.io/api/v2";
-var OutreachClient = function () {
+var OutreachClient = function (props) {
+    var handleBaseURL = props.handleBaseURL;
+    var baseURL = handleBaseURL
+        ? handleBaseURL(OutreachBaseURL)
+        : OutreachBaseURL;
+    var getAccountById = function (id, token) {
+        var url = "".concat(baseURL, "/accounts/").concat(id);
+        return apiRequest({ url: url, token: token, method: "GET" });
+    };
     var createAccount = function (params, token) {
-        var url = "".concat(OutreachBaseURL, "/accounts");
+        var url = "".concat(baseURL, "/accounts");
         return apiRequest({
             url: url,
             token: token,
@@ -69,7 +75,7 @@ var OutreachClient = function () {
     };
     var updateAccountName = function (params, token) {
         var id = params.id, name = params.name;
-        var url = "".concat(OutreachBaseURL, "/accounts/").concat(id);
+        var url = "".concat(baseURL, "/accounts/").concat(id);
         return apiRequest({
             url: url,
             token: token,
@@ -84,9 +90,13 @@ var OutreachClient = function () {
             },
         });
     };
+    var getProspectById = function (id, token) {
+        var url = "".concat(baseURL, "/prospects/").concat(id);
+        return apiRequest({ url: url, token: token, method: "GET" });
+    };
     var createProspect = function (params, token) {
         var accountId = params.accountId, attributes = __rest(params, ["accountId"]);
-        var url = "".concat(OutreachBaseURL, "/prospects");
+        var url = "".concat(baseURL, "/prospects");
         return apiRequest({
             url: url,
             token: token,
@@ -107,9 +117,9 @@ var OutreachClient = function () {
             },
         });
     };
-    var updateProspectName = function (params, token) {
+    var updateProspect = function (params, token) {
         var id = params.id, attributes = __rest(params, ["id"]);
-        var url = "".concat(OutreachBaseURL, "/prospects/").concat(id);
+        var url = "".concat(baseURL, "/prospects/").concat(id);
         return apiRequest({
             url: url,
             token: token,
@@ -117,13 +127,13 @@ var OutreachClient = function () {
             params: { data: { type: "prospect", id: id, attributes: attributes } },
         });
     };
-    var getSequences = function (token) {
-        var url = "".concat(OutreachBaseURL, "/sequences");
-        return apiRequest({ url: url, token: token, method: "GET" });
+    var getSequences = function (params, token) {
+        var url = "".concat(baseURL, "/sequences");
+        return apiRequest({ url: url, token: token, method: "GET", params: params });
     };
     var addProspectToSequence = function (params, token) {
-        var prospectId = params.prospectId, sequenceId = params.sequenceId;
-        var url = "".concat(OutreachBaseURL, "/sequenceStates");
+        var prospectId = params.prospectId, sequenceId = params.sequenceId, mailboxId = params.mailboxId;
+        var url = "".concat(baseURL, "/sequenceStates");
         return apiRequest({
             url: url,
             token: token,
@@ -138,11 +148,17 @@ var OutreachClient = function () {
                                 id: prospectId,
                             },
                         },
-                    },
-                    sequence: {
-                        data: {
-                            type: "sequence",
-                            id: sequenceId,
+                        sequence: {
+                            data: {
+                                type: "sequence",
+                                id: sequenceId,
+                            },
+                        },
+                        mailbox: {
+                            data: {
+                                type: "mailbox",
+                                id: mailboxId,
+                            },
                         },
                     },
                 },
@@ -151,19 +167,21 @@ var OutreachClient = function () {
     };
     var getMailboxes = function (params, token) {
         var userId = params.userId;
-        var url = "".concat(OutreachBaseURL, "/mailboxes?filter[userId]=").concat(userId);
+        var url = "".concat(baseURL, "/mailboxes?filter[userId]=").concat(userId);
         return apiRequest({ url: url, token: token, method: "GET" });
     };
     var testMailboxSync = function (params, token) {
         var mailboxId = params.mailboxId;
-        var url = "".concat(OutreachBaseURL, "/mailboxes/").concat(mailboxId, "/actions/testSync");
+        var url = "".concat(baseURL, "/mailboxes/").concat(mailboxId, "/actions/testSync");
         return apiRequest({ url: url, token: token, method: "POST", params: {} });
     };
     return {
+        getAccountById: getAccountById,
         createAccount: createAccount,
         updateAccountName: updateAccountName,
+        getProspectById: getProspectById,
         createProspect: createProspect,
-        updateProspectName: updateProspectName,
+        updateProspect: updateProspect,
         getSequences: getSequences,
         addProspectToSequence: addProspectToSequence,
         getMailboxes: getMailboxes,

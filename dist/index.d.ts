@@ -9,7 +9,12 @@ export type OutreachResponseItem<T extends string> = {
     };
     [key: string]: any;
 };
-declare const OutreachClient: () => {
+declare const OutreachClient: (props: {
+    handleBaseURL?: (baseURL: string) => string;
+}) => {
+    getAccountById: (id: number, token: string) => Promise<{
+        data: OutreachResponseItem<"account">;
+    }>;
     createAccount: (params: Partial<{
         name: string;
         domain: string;
@@ -22,6 +27,9 @@ declare const OutreachClient: () => {
     }, token: string) => Promise<{
         data: OutreachResponseItem<"account">;
     }>;
+    getProspectById: (id: number, token: string) => Promise<{
+        data: OutreachResponseItem<"prospect">;
+    }>;
     createProspect: (params: {
         emails: string[];
         firstName: string;
@@ -32,32 +40,33 @@ declare const OutreachClient: () => {
     }, token: string) => Promise<{
         data: OutreachResponseItem<"prospect">;
     }>;
-    updateProspectName: (params: {
+    updateProspect: (params: {
         id: number;
-        firstName: string;
-        middleName: string;
-        lastName: string;
+        [key: string]: any;
     }, token: string) => Promise<{
         data: OutreachResponseItem<"prospect">;
     }>;
-    getSequences: (token: string) => Promise<{
+    getSequences: (params: {
+        [key: string]: string;
+    }, token: string) => Promise<{
         data: OutreachResponseItem<"sequence">[];
     }>;
     addProspectToSequence: (params: {
         prospectId: number;
         sequenceId: number;
+        mailboxId: number;
     }, token: string) => Promise<{
         data: OutreachResponseItem<"sequenceState">;
     }>;
     getMailboxes: (params: {
-        userId: number;
+        userId: number | string;
     }, token: string) => Promise<{
-        data: OutreachResponseItem<string>[];
+        data: OutreachResponseItem<"mailbox">[];
     }>;
     testMailboxSync: (params: {
-        mailboxId: number;
+        mailboxId: number | string;
     }, token: string) => Promise<{
-        data: OutreachResponseItem<string>;
+        data: OutreachResponseItem<"mailbox">;
     }>;
 };
 export default OutreachClient;

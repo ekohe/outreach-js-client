@@ -1,11 +1,11 @@
 {
 	"name": "outreach-js-client",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "",
 	"main": "dist/index.js",
 	"files": ["src"],
 	"scripts": {
-		"build": "tsc"
+		"build": "rm -rf ./dist & tsc"
 	},
 	"keywords": [],
 	"author": "<lu.hao@ekohe.com>",

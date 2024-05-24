@@ -2,12 +2,15 @@ export type OutreachResponseItem<T extends string> = {
 	type: T
 	id: number
 	attributes: {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		[key: string]: any
 	}
 	relationships: {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		[key: string]: any
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	[key: string]: any
 }
 
@@ -29,8 +32,8 @@ const apiRequest = <R>(
 			headers: {
 				"Content-Type": "application/vnd.api+json",
 				Authorization: `Bearer ${token}`,
-				"Access-Control-Request-Headers": "Content-Type, Authorization",
 			},
+			mode: "cors",
 			body: method !== "GET" ? JSON.stringify(params) : undefined,
 		})
 			.then((response) => {
@@ -47,14 +50,30 @@ const apiRequest = <R>(
 
 const OutreachBaseURL = "https://api.outreach.io/api/v2"
 
-const OutreachClient = () => {
+const OutreachClient = (props: {
+	handleBaseURL?: (baseURL: string) => string
+}) => {
+	const { handleBaseURL } = props
+
+	const baseURL = handleBaseURL
+		? handleBaseURL(OutreachBaseURL)
+		: OutreachBaseURL
+
+	const getAccountById = (
+		id: number,
+		token: string,
+	): Promise<{ data: OutreachResponseItem<"account"> }> => {
+		const url = `${baseURL}/accounts/${id}`
+		return apiRequest({ url, token, method: "GET" })
+	}
+
 	const createAccount = (
 		params: Partial<{ name: string; domain: string }>,
 		token: string,
 	): Promise<{
 		data: OutreachResponseItem<"account">
 	}> => {
-		const url = `${OutreachBaseURL}/accounts`
+		const url = `${baseURL}/accounts`
 		return apiRequest({
 			url,
 			token,
@@ -77,7 +96,7 @@ const OutreachClient = () => {
 		data: OutreachResponseItem<"account">
 	}> => {
 		const { id, name } = params
-		const url = `${OutreachBaseURL}/accounts/${id}`
+		const url = `${baseURL}/accounts/${id}`
 		return apiRequest({
 			url,
 			token,
@@ -91,6 +110,14 @@ const OutreachClient = () => {
 				},
 			},
 		})
+	}
+
+	const getProspectById = (
+		id: number,
+		token: string,
+	): Promise<{ data: OutreachResponseItem<"prospect"> }> => {
+		const url = `${baseURL}/prospects/${id}`
+		return apiRequest({ url, token, method: "GET" })
 	}
 
 	const createProspect = (
@@ -107,7 +134,7 @@ const OutreachClient = () => {
 		data: OutreachResponseItem<"prospect">
 	}> => {
 		const { accountId, ...attributes } = params
-		const url = `${OutreachBaseURL}/prospects`
+		const url = `${baseURL}/prospects`
 		return apiRequest({
 			url,
 			token,
@@ -129,17 +156,16 @@ const OutreachClient = () => {
 		})
 	}
 
-	const updateProspectName = (
+	const updateProspect = (
 		params: {
 			id: number
-			firstName: string
-			middleName: string
-			lastName: string
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			[key: string]: any
 		},
 		token: string,
 	): Promise<{ data: OutreachResponseItem<"prospect"> }> => {
 		const { id, ...attributes } = params
-		const url = `${OutreachBaseURL}/prospects/${id}`
+		const url = `${baseURL}/prospects/${id}`
 		return apiRequest({
 			url,
 			token,
@@ -149,23 +175,25 @@ const OutreachClient = () => {
 	}
 
 	const getSequences = (
+		params: { [key: string]: string },
 		token: string,
 	): Promise<{
 		data: OutreachResponseItem<"sequence">[]
 	}> => {
-		const url = `${OutreachBaseURL}/sequences`
-		return apiRequest({ url, token, method: "GET" })
+		const url = `${baseURL}/sequences`
+		return apiRequest({ url, token, method: "GET", params })
 	}
 
 	const addProspectToSequence = (
 		params: {
 			prospectId: number
 			sequenceId: number
+			mailboxId: number
 		},
 		token: string,
 	): Promise<{ data: OutreachResponseItem<"sequenceState"> }> => {
-		const { prospectId, sequenceId } = params
-		const url = `${OutreachBaseURL}/sequenceStates`
+		const { prospectId, sequenceId, mailboxId } = params
+		const url = `${baseURL}/sequenceStates`
 		return apiRequest({
 			url,
 			token,
@@ -180,11 +208,17 @@ const OutreachClient = () => {
 								id: prospectId,
 							},
 						},
-					},
-					sequence: {
-						data: {
-							type: "sequence",
-							id: sequenceId,
+						sequence: {
+							data: {
+								type: "sequence",
+								id: sequenceId,
+							},
+						},
+						mailbox: {
+							data: {
+								type: "mailbox",
+								id: mailboxId,
+							},
 						},
 					},
 				},
@@ -193,30 +227,32 @@ const OutreachClient = () => {
 	}
 
 	const getMailboxes = (
-		params: { userId: number },
+		params: { userId: number | string },
 		token: string,
-	): Promise<{ data: OutreachResponseItem<string>[] }> => {
+	): Promise<{ data: OutreachResponseItem<"mailbox">[] }> => {
 		const { userId } = params
-		const url = `${OutreachBaseURL}/mailboxes?filter[userId]=${userId}`
+		const url = `${baseURL}/mailboxes?filter[userId]=${userId}`
 		return apiRequest({ url, token, method: "GET" })
 	}
 
 	const testMailboxSync = (
 		params: {
-			mailboxId: number
+			mailboxId: number | string
 		},
 		token: string,
-	): Promise<{ data: OutreachResponseItem<string> }> => {
+	): Promise<{ data: OutreachResponseItem<"mailbox"> }> => {
 		const { mailboxId } = params
-		const url = `${OutreachBaseURL}/mailboxes/${mailboxId}/actions/testSync`
+		const url = `${baseURL}/mailboxes/${mailboxId}/actions/testSync`
 		return apiRequest({ url, token, method: "POST", params: {} })
 	}
 
 	return {
+		getAccountById,
 		createAccount,
 		updateAccountName,
+		getProspectById,
 		createProspect,
-		updateProspectName,
+		updateProspect,
 		getSequences,
 		addProspectToSequence,
 		getMailboxes,
