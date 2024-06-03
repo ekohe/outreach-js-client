@@ -120,6 +120,14 @@ const OutreachClient = (props: {
 		return apiRequest({ url, token, method: "GET" })
 	}
 
+	const getProspectByEmail = (
+		email: string,
+		token: string,
+	): Promise<{ data: OutreachResponseItem<"prospect">[] }> => {
+		const url = `${baseURL}/prospects?filter[emails]=${email}`
+		return apiRequest({ url, token, method: "GET" })
+	}
+
 	const createProspect = (
 		params: {
 			emails: string[]
@@ -182,6 +190,14 @@ const OutreachClient = (props: {
 	}> => {
 		const url = `${baseURL}/sequences`
 		return apiRequest({ url, token, method: "GET", params })
+	}
+
+	const getSequenceById = (
+		id: number,
+		token: string,
+	): Promise<OutreachResponseItem<"sequenceState">> => {
+		const url = `${baseURL}/sequenceStates/${id}`
+		return apiRequest({ url, token, method: "GET" })
 	}
 
 	const addProspectToSequence = (
@@ -251,9 +267,11 @@ const OutreachClient = (props: {
 		createAccount,
 		updateAccountName,
 		getProspectById,
+		getProspectByEmail,
 		createProspect,
 		updateProspect,
 		getSequences,
+		getSequenceById,
 		addProspectToSequence,
 		getMailboxes,
 		testMailboxSync,

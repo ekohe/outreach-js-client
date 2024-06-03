@@ -94,6 +94,10 @@ var OutreachClient = function (props) {
         var url = "".concat(baseURL, "/prospects/").concat(id);
         return apiRequest({ url: url, token: token, method: "GET" });
     };
+    var getProspectByEmail = function (email, token) {
+        var url = "".concat(baseURL, "/prospects?filter[emails]=").concat(email);
+        return apiRequest({ url: url, token: token, method: "GET" });
+    };
     var createProspect = function (params, token) {
         var accountId = params.accountId, attributes = __rest(params, ["accountId"]);
         var url = "".concat(baseURL, "/prospects");
@@ -130,6 +134,10 @@ var OutreachClient = function (props) {
     var getSequences = function (params, token) {
         var url = "".concat(baseURL, "/sequences");
         return apiRequest({ url: url, token: token, method: "GET", params: params });
+    };
+    var getSequenceById = function (id, token) {
+        var url = "".concat(baseURL, "/sequenceStates/").concat(id);
+        return apiRequest({ url: url, token: token, method: "GET" });
     };
     var addProspectToSequence = function (params, token) {
         var prospectId = params.prospectId, sequenceId = params.sequenceId, mailboxId = params.mailboxId;
@@ -180,9 +188,11 @@ var OutreachClient = function (props) {
         createAccount: createAccount,
         updateAccountName: updateAccountName,
         getProspectById: getProspectById,
+        getProspectByEmail: getProspectByEmail,
         createProspect: createProspect,
         updateProspect: updateProspect,
         getSequences: getSequences,
+        getSequenceById: getSequenceById,
         addProspectToSequence: addProspectToSequence,
         getMailboxes: getMailboxes,
         testMailboxSync: testMailboxSync,

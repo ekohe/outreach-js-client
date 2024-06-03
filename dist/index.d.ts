@@ -30,6 +30,9 @@ declare const OutreachClient: (props: {
     getProspectById: (id: number, token: string) => Promise<{
         data: OutreachResponseItem<"prospect">;
     }>;
+    getProspectByEmail: (email: string, token: string) => Promise<{
+        data: OutreachResponseItem<"prospect">[];
+    }>;
     createProspect: (params: {
         emails: string[];
         firstName: string;
@@ -51,6 +54,7 @@ declare const OutreachClient: (props: {
     }, token: string) => Promise<{
         data: OutreachResponseItem<"sequence">[];
     }>;
+    getSequenceById: (id: number, token: string) => Promise<OutreachResponseItem<"sequenceState">>;
     addProspectToSequence: (params: {
         prospectId: number;
         sequenceId: number;
