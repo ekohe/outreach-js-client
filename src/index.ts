@@ -103,6 +103,7 @@ const OutreachClient = (props: {
 			method: "PATCH",
 			params: {
 				data: {
+					id,
 					type: "account",
 					attributes: {
 						name,

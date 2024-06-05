@@ -82,6 +82,7 @@ var OutreachClient = function (props) {
             method: "PATCH",
             params: {
                 data: {
+                    id: id,
                     type: "account",
                     attributes: {
                         name: name,
