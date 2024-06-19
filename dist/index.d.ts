@@ -18,6 +18,7 @@ declare const OutreachClient: (props: {
     createAccount: (params: Partial<{
         name: string;
         domain: string;
+        ownerId: number;
     }>, token: string) => Promise<{
         data: OutreachResponseItem<"account">;
     }>;
@@ -40,6 +41,7 @@ declare const OutreachClient: (props: {
         lastName: string;
         title: string;
         accountId: number;
+        ownerId: number;
     }, token: string) => Promise<{
         data: OutreachResponseItem<"prospect">;
     }>;

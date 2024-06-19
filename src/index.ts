@@ -68,11 +68,12 @@ const OutreachClient = (props: {
 	}
 
 	const createAccount = (
-		params: Partial<{ name: string; domain: string }>,
+		params: Partial<{ name: string; domain: string; ownerId: number }>,
 		token: string,
 	): Promise<{
 		data: OutreachResponseItem<"account">
 	}> => {
+		const { ownerId, ...attributes } = params
 		const url = `${baseURL}/accounts`
 		return apiRequest({
 			url,
@@ -81,8 +82,14 @@ const OutreachClient = (props: {
 			params: {
 				data: {
 					type: "account",
-					attributes: {
-						...params,
+					attributes,
+					relationships: {
+						owner: {
+							data: {
+								type: "user",
+								id: ownerId,
+							},
+						},
 					},
 				},
 			},
@@ -137,12 +144,13 @@ const OutreachClient = (props: {
 			lastName: string
 			title: string
 			accountId: number
+			ownerId: number
 		},
 		token: string,
 	): Promise<{
 		data: OutreachResponseItem<"prospect">
 	}> => {
-		const { accountId, ...attributes } = params
+		const { accountId, ownerId, ...attributes } = params
 		const url = `${baseURL}/prospects`
 		return apiRequest({
 			url,
@@ -157,6 +165,12 @@ const OutreachClient = (props: {
 							data: {
 								type: "account",
 								id: accountId,
+							},
+						},
+						owner: {
+							data: {
+								type: "user",
+								id: ownerId,
 							},
 						},
 					},

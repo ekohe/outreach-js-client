@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -60,6 +49,7 @@ var OutreachClient = function (props) {
         return apiRequest({ url: url, token: token, method: "GET" });
     };
     var createAccount = function (params, token) {
+        var ownerId = params.ownerId, attributes = __rest(params, ["ownerId"]);
         var url = "".concat(baseURL, "/accounts");
         return apiRequest({
             url: url,
@@ -68,7 +58,15 @@ var OutreachClient = function (props) {
             params: {
                 data: {
                     type: "account",
-                    attributes: __assign({}, params),
+                    attributes: attributes,
+                    relationships: {
+                        owner: {
+                            data: {
+                                type: "user",
+                                id: ownerId,
+                            },
+                        },
+                    },
                 },
             },
         });
@@ -100,7 +98,7 @@ var OutreachClient = function (props) {
         return apiRequest({ url: url, token: token, method: "GET" });
     };
     var createProspect = function (params, token) {
-        var accountId = params.accountId, attributes = __rest(params, ["accountId"]);
+        var accountId = params.accountId, ownerId = params.ownerId, attributes = __rest(params, ["accountId", "ownerId"]);
         var url = "".concat(baseURL, "/prospects");
         return apiRequest({
             url: url,
@@ -115,6 +113,12 @@ var OutreachClient = function (props) {
                             data: {
                                 type: "account",
                                 id: accountId,
+                            },
+                        },
+                        owner: {
+                            data: {
+                                type: "user",
+                                id: ownerId,
                             },
                         },
                     },
