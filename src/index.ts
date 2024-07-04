@@ -78,7 +78,7 @@ const OutreachClient = (props: {
 			name,
 			domain,
 			websiteUrl: domain,
-			companyType: 'company'
+			companyType: "company"
 		}
 		const url = `${baseURL}/accounts`
 		return apiRequest({
