@@ -1,14 +1,15 @@
+interface PlainObject {
+    [key: string]: any;
+}
 export type OutreachResponseItem<T extends string> = {
     type: T;
     id: number;
-    attributes: {
-        [key: string]: any;
-    };
-    relationships: {
-        [key: string]: any;
-    };
-    [key: string]: any;
-};
+    attributes: PlainObject;
+    relationships: PlainObject;
+} & PlainObject;
+export type OutreachResponseResult<T> = {
+    data: T;
+} & PlainObject;
 declare const OutreachClient: (props: {
     handleBaseURL?: (baseURL: string) => string;
 }) => {
@@ -74,5 +75,11 @@ declare const OutreachClient: (props: {
     }, token: string) => Promise<{
         data: OutreachResponseItem<"mailbox">;
     }>;
+    getSequenceState: (id: number, params: {
+        [key: string]: string;
+    }, token: string) => Promise<OutreachResponseResult<OutreachResponseItem<"sequenceState">>>;
+    getMailings: (params: {
+        [key: string]: string;
+    }, token: string) => Promise<OutreachResponseResult<OutreachResponseItem<"mailing">[]>>;
 };
 export default OutreachClient;

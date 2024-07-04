@@ -49,7 +49,13 @@ var OutreachClient = function (props) {
         return apiRequest({ url: url, token: token, method: "GET" });
     };
     var createAccount = function (params, token) {
-        var ownerId = params.ownerId, attributes = __rest(params, ["ownerId"]);
+        var ownerId = params.ownerId, domain = params.domain, name = params.name;
+        var attributes = {
+            name: name,
+            domain: domain,
+            websiteUrl: domain,
+            companyType: "company",
+        };
         var url = "".concat(baseURL, "/accounts");
         return apiRequest({
             url: url,
@@ -188,6 +194,14 @@ var OutreachClient = function (props) {
         var url = "".concat(baseURL, "/mailboxes/").concat(mailboxId, "/actions/testSync");
         return apiRequest({ url: url, token: token, method: "POST", params: {} });
     };
+    var getSequenceState = function (id, params, token) {
+        var url = "".concat(baseURL, "/sequenceStates/").concat(id);
+        return apiRequest({ url: url, token: token, params: params, method: "GET" });
+    };
+    var getMailings = function (params, token) {
+        var url = "".concat(baseURL, "/mailings");
+        return apiRequest({ url: url, token: token, params: params, method: "GET" });
+    };
     return {
         getAccountById: getAccountById,
         createAccount: createAccount,
@@ -201,6 +215,8 @@ var OutreachClient = function (props) {
         addProspectToSequence: addProspectToSequence,
         getMailboxes: getMailboxes,
         testMailboxSync: testMailboxSync,
+        getSequenceState: getSequenceState,
+        getMailings: getMailings,
     };
 };
 exports.default = OutreachClient;

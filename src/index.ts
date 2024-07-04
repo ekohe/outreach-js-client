@@ -1,18 +1,18 @@
-export type OutreachResponseItem<T extends string> = {
-	type: T
-	id: number
-	attributes: {
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		[key: string]: any
-	}
-	relationships: {
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		[key: string]: any
-	}
-
+interface PlainObject {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	[key: string]: any
 }
+
+export type OutreachResponseItem<T extends string> = {
+	type: T
+	id: number
+	attributes: PlainObject
+	relationships: PlainObject
+} & PlainObject
+
+export type OutreachResponseResult<T> = {
+	data: T
+} & PlainObject
 
 const apiRequest = <R>(
 	props: { url: string; token: string } & (
@@ -78,7 +78,7 @@ const OutreachClient = (props: {
 			name,
 			domain,
 			websiteUrl: domain,
-			companyType: "company"
+			companyType: "company",
 		}
 		const url = `${baseURL}/accounts`
 		return apiRequest({
@@ -283,6 +283,23 @@ const OutreachClient = (props: {
 		return apiRequest({ url, token, method: "POST", params: {} })
 	}
 
+	const getSequenceState = (
+		id: number,
+		params: { [key: string]: string },
+		token: string,
+	): Promise<OutreachResponseResult<OutreachResponseItem<"sequenceState">>> => {
+		const url = `${baseURL}/sequenceStates/${id}`
+		return apiRequest({ url, token, params, method: "GET" })
+	}
+
+	const getMailings = (
+		params: { [key: string]: string },
+		token: string,
+	): Promise<OutreachResponseResult<OutreachResponseItem<"mailing">[]>> => {
+		const url = `${baseURL}/mailings`
+		return apiRequest({ url, token, params, method: "GET" })
+	}
+
 	return {
 		getAccountById,
 		createAccount,
@@ -296,6 +313,8 @@ const OutreachClient = (props: {
 		addProspectToSequence,
 		getMailboxes,
 		testMailboxSync,
+		getSequenceState,
+		getMailings,
 	}
 }
 
