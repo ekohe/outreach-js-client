@@ -73,7 +73,13 @@ const OutreachClient = (props: {
 	): Promise<{
 		data: OutreachResponseItem<"account">
 	}> => {
-		const { ownerId, ...attributes } = params
+		const { ownerId, domain, name } = params
+		const attributes = {
+			name,
+			domain,
+			websiteUrl: domain,
+			companyType: 'company'
+		}
 		const url = `${baseURL}/accounts`
 		return apiRequest({
 			url,
