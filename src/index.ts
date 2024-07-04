@@ -1,18 +1,24 @@
-interface PlainObject {
+export type OutreachResponseItem<T extends string> = {
+	type: T
+	id: number
+	attributes: {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		[key: string]: any
+	}
+	relationships: {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		[key: string]: any
+	}
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	[key: string]: any
 }
 
-export type OutreachResponseItem<T extends string> = {
-	type: T
-	id: number
-	attributes: PlainObject
-	relationships: PlainObject
-} & PlainObject
-
 export type OutreachResponseResult<T> = {
 	data: T
-} & PlainObject
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	[key: string]: any
+}
 
 const apiRequest = <R>(
 	props: { url: string; token: string } & (

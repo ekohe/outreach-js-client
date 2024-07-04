@@ -1,15 +1,18 @@
-interface PlainObject {
-    [key: string]: any;
-}
 export type OutreachResponseItem<T extends string> = {
     type: T;
     id: number;
-    attributes: PlainObject;
-    relationships: PlainObject;
-} & PlainObject;
+    attributes: {
+        [key: string]: any;
+    };
+    relationships: {
+        [key: string]: any;
+    };
+    [key: string]: any;
+};
 export type OutreachResponseResult<T> = {
     data: T;
-} & PlainObject;
+    [key: string]: any;
+};
 declare const OutreachClient: (props: {
     handleBaseURL?: (baseURL: string) => string;
 }) => {
