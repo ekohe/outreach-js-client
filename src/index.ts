@@ -269,6 +269,18 @@ const OutreachClient = (props: {
 		})
 	}
 
+	const getUserInfo = (
+		params: {
+			id: string | number
+			searchParams?: { [key: string]: string }
+		},
+		token: string,
+	): Promise<{ data: OutreachResponseItem<"user"> }> => {
+		const { id, searchParams } = params
+		const url = `${baseURL}/users/${id}`
+		return apiRequest({ url, params: searchParams, token, method: "GET" })
+	}
+
 	const getMailboxes = (
 		params: { userId: number | string },
 		token: string,
@@ -317,6 +329,7 @@ const OutreachClient = (props: {
 		getSequences,
 		getSequenceById,
 		addProspectToSequence,
+		getUserInfo,
 		getMailboxes,
 		testMailboxSync,
 		getSequenceState,

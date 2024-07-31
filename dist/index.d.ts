@@ -68,6 +68,14 @@ declare const OutreachClient: (props: {
     }, token: string) => Promise<{
         data: OutreachResponseItem<"sequenceState">;
     }>;
+    getUserInfo: (params: {
+        id: string | number;
+        searchParams?: {
+            [key: string]: string;
+        };
+    }, token: string) => Promise<{
+        data: OutreachResponseItem<"user">;
+    }>;
     getMailboxes: (params: {
         userId: number | string;
     }, token: string) => Promise<{

@@ -184,6 +184,11 @@ var OutreachClient = function (props) {
             },
         });
     };
+    var getUserInfo = function (params, token) {
+        var id = params.id, searchParams = params.searchParams;
+        var url = "".concat(baseURL, "/users/").concat(id);
+        return apiRequest({ url: url, params: searchParams, token: token, method: "GET" });
+    };
     var getMailboxes = function (params, token) {
         var userId = params.userId;
         var url = "".concat(baseURL, "/mailboxes?filter[userId]=").concat(userId);
@@ -213,6 +218,7 @@ var OutreachClient = function (props) {
         getSequences: getSequences,
         getSequenceById: getSequenceById,
         addProspectToSequence: addProspectToSequence,
+        getUserInfo: getUserInfo,
         getMailboxes: getMailboxes,
         testMailboxSync: testMailboxSync,
         getSequenceState: getSequenceState,
